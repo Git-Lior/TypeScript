@@ -868,7 +868,8 @@ namespace ts {
                 case SyntaxKind.CallExpression:
                     return hasNarrowableArgument(<CallExpression>expr);
                 case SyntaxKind.ParenthesizedExpression:
-                    return isNarrowingExpression((<ParenthesizedExpression>expr).expression);
+                case SyntaxKind.NonNullExpression:
+                    return isNarrowingExpression((<ParenthesizedExpression | NonNullExpression>expr).expression);
                 case SyntaxKind.BinaryExpression:
                     return isNarrowingBinaryExpression(<BinaryExpression>expr);
                 case SyntaxKind.PrefixUnaryExpression:
@@ -1053,6 +1054,7 @@ namespace ts {
 
         function isTopLevelLogicalExpression(node: Node): boolean {
             while (isParenthesizedExpression(node.parent) ||
+                isNonNullExpression(node.parent) ||
                 isPrefixUnaryExpression(node.parent) && node.parent.operator === SyntaxKind.ExclamationToken) {
                 node = node.parent;
             }
